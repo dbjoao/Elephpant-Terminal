@@ -1,0 +1,15 @@
+
+curated top trades by staff : https://www.ceowatcher.com/api/feeds?feed_id=15&feed_id=16&limit=10
+
+ceo trades : https://www.ceowatcher.com/api/feeds?feed_id=17&feed_id=18&limit=10
+
+all trades: https://www.ceowatcher.com/api/feeds?feed_id=1&feed_id=3&feed_id=5&feed_id=7&feed_id=9&feed_id=11&feed_id=13&feed_id=15&feed_id=2&feed_id=4&feed_id=6&feed_id=8&feed_id=10&feed_id=12&feed_id=14&feed_id=16&limit=10
+
+abnormal large trades https://www.ceowatcher.com/api/feeds?feed_id=3&feed_id=4&limit=10
+
+"normal" large trades https://www.ceowatcher.com/api/feeds?feed_id=13&feed_id=14&limit=10
+
+top insiders with historical returns https://www.ceowatcher.com/api/feeds?feed_id=11&feed_id=12&limit=10
+
+
+https://www.sec.gov/Archives/edgar/data/1108038/000159158825000027/xslF345X05/primary_01.xml

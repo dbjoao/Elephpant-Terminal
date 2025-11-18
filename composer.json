@@ -1,0 +1,5 @@
+{
+    "require": {
+        "finnhub/client": "^2.0"
+    }
+}
