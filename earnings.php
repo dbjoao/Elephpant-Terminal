@@ -329,14 +329,13 @@ if ($err) {
       <a href="index.php" style="text-decoration: none;">
         <div class="terminal-logo">
           <img src="logo.png" alt="Minerva Logo">
-          <span>MarketRat</span>
+          <span>Minerva Terminal</span>
         </div>
       </a>
         <div class="terminal-nav">
           <a href="earnings.php">Earnings</a>
-          <a href="portfolio.php" class="active">Portfolio</a>
           <form method="GET" action="stock.php" style="display: inline-flex; gap: 4px; margin: 0;">
-            <input type="text" name="symbol" placeholder="Search ticker..." required 
+            <input type="text" name="symbol" placeholder="Search US ticker..." required 
                    style="padding: 5px 10px; background: #0d1117; border: 1px solid rgba(255,122,0,0.3); 
                           border-radius: 3px; color: #e0e6ed; font-size: 11px; font-family: 'Inter', sans-serif; 
                           outline: none; text-transform: uppercase;" 

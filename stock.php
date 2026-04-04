@@ -582,38 +582,7 @@ require_once(__DIR__ . '/stock_backend.php');
     </style>
 </head>
 <body>
-    <div class="terminal-header">
-      <a href="index.php" style="text-decoration: none;">
-        <div class="terminal-logo">
-          <img src="logo.png" alt="Minerva Logo">
-          <span>MarketRat</span>
-        </div>
-      </a>
-        <div class="terminal-nav">
-            <a href="earnings.php">Earnings</a>
-            <a href="portfolio.php" class="active">Portfolio</a>
-            <a href="https://www.google.com/finance/quote/<?php echo htmlspecialchars($symbol); ?>:NYSE?window=5D" target="_blank">GOOGLE</a>
-            <a href="https://finance.yahoo.com/quote/<?php echo htmlspecialchars($symbol); ?>/analyst-insights/#upgrade-downgrade-table" target="_blank">YAHOO</a>
-            <a href="https://www.zacks.com/stock/quote/<?php echo urlencode($symbol); ?>">ZACKS</a>
-            <form method="GET" action="stock.php" style="display: inline-flex; gap: 4px; margin: 0;">
-                <input type="text" name="symbol" placeholder="Search ticker..." required 
-                    style="padding: 5px 10px; background: #0d1117; border: 1px solid rgba(255,122,0,0.3); 
-                            border-radius: 3px; color: #e0e6ed; font-size: 11px; font-family: 'Inter', sans-serif; 
-                            outline: none; text-transform: uppercase;" 
-                    onfocus="this.style.borderColor='#ff7a00'" 
-                    onblur="this.style.borderColor='rgba(255,122,0,0.3)'">
-                <button type="submit" style="padding: 5px 10px; background: rgba(255,122,0,0.1); 
-                                            border: 1px solid rgba(255,122,0,0.3); border-radius: 3px; 
-                                            color: #b0b8c4; font-size: 11px; font-weight: 500; 
-                                            text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; 
-                                            transition: all 0.2s;" 
-                        onmouseover="this.style.background='rgba(255,122,0,0.2)'; this.style.borderColor='#ff7a00'; this.style.color='#ff7a00'" 
-                        onmouseout="this.style.background='rgba(255,122,0,0.1)'; this.style.borderColor='rgba(255,122,0,0.3)'; this.style.color='#b0b8c4'">
-                Search
-                </button>
-            </form>
-        </div>
-    </div>
+    <?php include './includes/stockheader.php'; ?>
     
     <div class="container">
         
@@ -997,7 +966,91 @@ require_once(__DIR__ . '/stock_backend.php');
                     <?php endif; ?>
                 </div>
             </div>
-                <!--Benzinga Stock Grades Block -->
+                <!-- Insider Trading Block (Form 4 Filings) -->
+            <?php if (!empty($insiderData)): ?>
+            <div class="info-block grades-block">
+                <h2>SEC Form 4 - Insider Trading Activity</h2>
+                <div class="info-block-content">
+                    <div class="earnings-count">Showing <?php echo count($insiderData); ?> recent Form 4 filing(s)</div>
+                    <div class="grades-scroll">
+                        <?php foreach ($insiderData as $filing): ?>
+                        <div style="border-bottom: 1px solid #2d3548; padding: 12px 0; margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                <div>
+                                    <strong style="color: #ff7a00; font-size: 11px;">
+                                        <?php echo htmlspecialchars($filing['reportingOwnerName']); ?>
+                                    </strong>
+                                    <div style="font-size: 9px; color: #6b7280; margin-top: 2px;">
+                                        <?php echo htmlspecialchars(implode(', ', $filing['relationship'])); ?>
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 10px; color: #9ca3af;">
+                                        Filed: <?php echo htmlspecialchars($filing['filingDate']); ?>
+                                    </div>
+                                    <div style="font-size: 9px; color: #6b7280;">
+                                        Period: <?php echo htmlspecialchars($filing['periodOfReport']); ?>
+                                    </div>
+                                    <?php if (!empty($filing['secUrl'])): ?>
+                                    <div style="margin-top: 4px;">
+                                        <a href="<?php echo htmlspecialchars($filing['secUrl']); ?>" target="_blank" 
+                                           style="font-size: 9px; color: #00d4aa; text-decoration: none; 
+                                                  background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.3); 
+                                                  padding: 2px 6px; border-radius: 2px; font-weight: 600; 
+                                                  text-transform: uppercase; letter-spacing: 0.3px;">
+                                            SEC Filing
+                                        </a>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            
+
+                            <?php if (!empty($filing['transactions'])): ?>
+                            <table style="font-size: 9px; margin-top: 8px;">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Code</th>
+                                        <th>Shares</th>
+                                        <th>Price</th>
+                                        <th>Value</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($filing['transactions'] as $trans): 
+                                        $pricePerShare = floatval($trans['pricePerShare']);
+                                        $shares = floatval($trans['shares']);
+                                        $totalValue = $pricePerShare > 0 ? $pricePerShare * $shares : 0;
+                                        $rowClass = $trans['acquiredDisposed'] == 'A' ? 'transaction-buy' : 'transaction-sell';
+                                    ?>
+                                    <tr class="<?php echo $rowClass; ?>">
+                                        <td><?php echo htmlspecialchars($trans['transactionDate']); ?></td>
+                                        <td><?php echo htmlspecialchars($trans['securityTitle']); ?></td>
+                                        <td>
+                                            <span class="transaction-code code-<?php echo strtolower($trans['transactionCode']); ?>">
+                                                <?php echo htmlspecialchars($trans['transactionCode']); ?>
+                                            </span>
+                                        </td>
+                                        <td><?php echo number_format($shares); ?></td>
+                                        <td><?php echo $pricePerShare > 0 ? '$' . number_format($pricePerShare, 2) : 'N/A'; ?></td>
+                                        <td><?php echo $totalValue > 0 ? '$' . number_format($totalValue, 2) : 'N/A'; ?></td>
+                                        <td><strong><?php echo htmlspecialchars($trans['acquiredDisposedText']); ?></strong></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            <?php endif; ?>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <!--Benzinga Stock Grades Block -->
             <?php if (!empty($benzingaTables)): ?>
             <div class="info-block grades-block">
                 <h2>Benzinga Analyst Ratings</h2>

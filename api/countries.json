@@ -1,0 +1,74 @@
+{
+  "developed": {
+    "north_america": {
+      "United States of America": { "isin": "", "symbol": "^GSPC" },
+      "Canada": { "isin": "", "symbol": "^GSPTSE" },
+      "Mexico": { "isin": "", "symbol": "^MXX" }
+    },
+    "europe": {
+      "United Kingdom": { "isin": "", "symbol": "^FTSE" },
+      "Germany": { "isin": "", "symbol": "^GDAXI" },
+      "France": { "isin": "", "symbol": "^FCHI" },
+      "Spain": { "isin": "", "symbol": "^IBEX" },
+      "Italy": { "isin": "", "symbol": "FTSEMIB.MI" },
+      "Netherlands": { "isin": "", "symbol": "^AEX" },
+      "Switzerland": { "isin": "", "symbol": "^SSMI" },
+      "Sweden": { "isin": "", "symbol": "^OMX" },
+      "Denmark": { "isin": "", "symbol": "EDEN" },
+      "Finland": { "isin": "", "symbol": "^OMXH25" },
+      "Norway": { "isin": "", "symbol": "^OSEAX" },
+      "Belgium": { "isin": "", "symbol": "^BFX" },
+      "Austria": { "isin": "", "symbol": "^ATX" },
+      "Ireland": { "isin": "", "symbol": "^ISEQ" },
+      "Portugal": { "isin": "", "symbol": "PSI20.LS" },
+      "Poland": { "isin": "", "symbol": "IPOL.L" },
+      "Greece": { "isin": "LYMH", "symbol": "GRE.PA" },
+      "Czech Republic": { "isin": "", "symbol": "WICZH.FGI" },
+      "Hungary": { "isin": "", "symbol": "^BUX" }
+    },
+    "asia_pacific": {
+      "Japan": { "isin": "EUNN", "symbol": "^N225" },
+      "Australia": { "isin": "", "symbol": "^AXJO" },
+      "Hong Kong S.A.R.": { "isin": "", "symbol": "^HSI" },
+      "Singapore": { "isin": "", "symbol": "^STI" },
+      "New Zealand": { "isin": "", "symbol": "^NZ50" },
+      "South Korea": { "isin": "", "symbol": "^KS11" }
+    },
+    "middle_east": {
+      "Israel": { "isin": "", "symbol": "^TA125.TA" }
+    }
+  },
+  "emerging": {
+    "asia": {
+      "China": { "isin": "", "symbol": "000001.SS" },
+      "India": { "isin": "", "symbol": "^BSESN" },
+      "Taiwan": { "isin": "", "symbol": "^TWII" },
+      "Indonesia": { "isin": "", "symbol": "^JKSE" },
+      "Malaysia": { "isin": "", "symbol": "^KLSE" },
+      "Thailand": { "isin": "", "symbol": "^SET.BK" },
+      "Philippines": { "isin": "", "symbol": "^PSI" },
+      "Vietnam": { "isin": "", "symbol": "^VNINDEX" },
+      "Pakistan": { "isin": "", "symbol": "^KSE100" }
+    },
+    "latin_america": {
+      "Brazil": { "isin": "", "symbol": "^BVSP" },
+      "Argentina": { "isin": "", "symbol": "^MERV" },
+      "Chile": { "isin": "", "symbol": "^IPSA" },
+      "Colombia": { "isin": "", "symbol": "^COLCAP" },
+      "Peru": { "isin": "", "symbol": "^SPBLPGPT" }
+    },
+    "europe_africa": {
+      "Russia": { "isin": "", "symbol": "IMOEX.ME" },
+      "Turkey": { "isin": "", "symbol": "^XU100" },
+      "South Africa": { "isin": "", "symbol": "^JN0U.JO" },
+      "Egypt": { "isin": "", "symbol": "^CASE30" },
+      "Saudi Arabia": { "isin": "", "symbol": "^TASI" },
+      "United Arab Emirates": { "isin": "", "symbol": "^DFMGI" },
+      "Qatar": { "isin": "", "symbol": "^QSI" },
+      "Kuwait": { "isin": "", "symbol": "^KWSE" },
+      "Morocco": { "isin": "", "symbol": "^MASI" },
+      "Kenya": { "isin": "", "symbol": "^NSE20" },
+      "Nigeria": { "isin": "", "symbol": "^NGSE30" }
+    }
+  }
+}

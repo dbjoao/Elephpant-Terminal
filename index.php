@@ -194,38 +194,13 @@ $fedRateData = getFedRateData();
     </style>
   </head>
   <body>
-    <div class="terminal-header">
-      <a href="index.php" style="text-decoration: none;">
-        <div class="terminal-logo">
-          <img src="logo.png" alt="Minerva Logo">
-          <span>MarketRat</span>
-        </div>
-      </a>
-        <div class="terminal-nav">
-          <a href="earnings.php">Earnings</a>
-          <a href="portfolio.php" class="active">Portfolio</a>
-          <form method="GET" action="stock.php" style="display: inline-flex; gap: 4px; margin: 0;">
-            <input type="text" name="symbol" placeholder="Search ticker..." required 
-                   style="padding: 5px 10px; background: #0d1117; border: 1px solid rgba(255,122,0,0.3); 
-                          border-radius: 3px; color: #e0e6ed; font-size: 11px; font-family: 'Inter', sans-serif; 
-                          outline: none; text-transform: uppercase;" 
-                   onfocus="this.style.borderColor='#ff7a00'" 
-                   onblur="this.style.borderColor='rgba(255,122,0,0.3)'">
-            <button type="submit" style="padding: 5px 10px; background: rgba(255,122,0,0.1); 
-                                         border: 1px solid rgba(255,122,0,0.3); border-radius: 3px; 
-                                         color: #b0b8c4; font-size: 11px; font-weight: 500; 
-                                         text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; 
-                                         transition: all 0.2s;" 
-                    onmouseover="this.style.background='rgba(255,122,0,0.2)'; this.style.borderColor='#ff7a00'; this.style.color='#ff7a00'" 
-                    onmouseout="this.style.background='rgba(255,122,0,0.1)'; this.style.borderColor='rgba(255,122,0,0.3)'; this.style.color='#b0b8c4'">
-              Search
-            </button>
-          </form>
-      </div>
-    </div>
-    <?php include 'tickertape.php'; ?>
+    <?php include './includes/indexheader.php'; ?>
     
     <div class="container">
+      
+      <div class="info-banner">
+        <strong>Notice:</strong> Searching a ticker might result in a 500 error due to too much time processing. Please try again if this occurs.
+      </div>
       
       <?php if (!empty($fedRateData)): ?>
       <div class="table-container">        
@@ -311,56 +286,6 @@ $fedRateData = getFedRateData();
       </div>
       <?php endif; ?>
 
-      <!-- TradingView Widget BEGIN -->
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>
-        {
-        "dataSource": "SPX500",
-        "blockSize": "market_cap_basic",
-        "blockColor": "change",
-        "grouping": "sector",
-        "locale": "en",
-        "symbolUrl": "",
-        "colorTheme": "dark",
-        "exchanges": [],
-        "hasTopBar": false,
-        "isDataSetEnabled": false,
-        "isZoomEnabled": true,
-        "hasSymbolTooltip": false,
-        "isMonoSize": false,
-        "width": 1500,
-        "height": 500
-      }
-        </script>
-      </div>
-      <!-- TradingView Widget END -->
-    </div>
-
-    <!-- TradingView Widget BEGIN -->
-    <div class="container">
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-cross-rates.js" async>
-        {
-        "colorTheme": "dark",
-        "isTransparent": false,
-        "locale": "en",
-        "currencies": [
-          "EUR",
-          "USD",
-          "JPY",
-          "GBP",
-          "CHF",
-          "CNY"
-        ],
-        "backgroundColor": "rgba(26, 31, 46, 1)",
-        "width": 550,
-        "height": 400
-      }
-        </script>
-      </div>
-      <!-- TradingView Widget END -->
-    </div>
+      <?php include './includes/tradingviewindex.php'; ?>
   </body>
   </html>

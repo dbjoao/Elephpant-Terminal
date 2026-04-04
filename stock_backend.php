@@ -325,4 +325,160 @@ $data = $fetcher->getAllData();
 
 // Extract data for use in template
 extract($data);
-?>
+
+// Function to format CIK to 10 digits
+function formatCIK($cik) {
+    return str_pad($cik, 10, '0', STR_PAD_LEFT);
+}
+
+// Function to get CIK from ticker
+function getCIKFromTicker($ticker) {
+    $ticker = strtoupper(trim($ticker));
+    $jsonFile = __DIR__ . '/company_tickers.json';
+    
+    if (!file_exists($jsonFile)) {
+        return ['error' => 'company_tickers.json file not found'];
+    }
+    
+    $jsonData = file_get_contents($jsonFile);
+    $companies = json_decode($jsonData, true);
+    
+    foreach ($companies as $company) {
+        if (isset($company['ticker']) && $company['ticker'] === $ticker) {
+            return [
+                'cik_str' => $company['cik_str'],
+                'ticker' => $company['ticker'],
+                'title' => $company['title']
+            ];
+        }
+    }
+    
+    return ['error' => 'Ticker not found'];
+}
+
+// Function to get SEC submissions
+function getSubmissions($cik) {
+    $formattedCIK = formatCIK($cik);
+    $url = "https://data.sec.gov/submissions/CIK{$formattedCIK}.json";
+    
+    $options = [
+        'http' => [
+            'method' => 'GET',
+            'header' => 'User-Agent: Company Name email@example.com'
+        ]
+    ];
+    
+    $context = stream_context_create($options);
+    $response = @file_get_contents($url, false, $context);
+    
+    if ($response === false) {
+        return ['error' => 'Unable to fetch submissions data'];
+    }
+    
+    return json_decode($response, true);
+}
+
+// Function to parse Form 4 XML
+function parseForm4XML($cik, $accessionNumber, $primaryDoc) {
+    $xmlFilename = preg_replace('/^xslF345X\d+\//', '', $primaryDoc);
+    $accessionNumberClean = str_replace('-', '', $accessionNumber);
+    $xmlUrl = "https://www.sec.gov/Archives/edgar/data/{$cik}/{$accessionNumberClean}/{$xmlFilename}";
+    
+    // Create SEC filing URL
+    $secFilingUrl = "https://www.sec.gov/Archives/edgar/data/{$cik}/{$accessionNumberClean}/xslF345X05/" . $xmlFilename;
+    
+    $options = [
+        'http' => [
+            'method' => 'GET',
+            'header' => 'User-Agent: Company Name email@example.com'
+        ]
+    ];
+    
+    $context = stream_context_create($options);
+    $xmlContent = @file_get_contents($xmlUrl, false, $context);
+    
+    if ($xmlContent === false) {
+        return null;
+    }
+    
+    $xml = @simplexml_load_string($xmlContent);
+    if ($xml === false) {
+        return null;
+    }
+    
+    $data = [
+        'periodOfReport' => (string)$xml->periodOfReport,
+        'issuerName' => (string)$xml->issuer->issuerName,
+        'issuerTradingSymbol' => (string)$xml->issuer->issuerTradingSymbol,
+        'reportingOwnerName' => (string)$xml->reportingOwner->reportingOwnerId->rptOwnerName,
+        'reportingOwnerCik' => (string)$xml->reportingOwner->reportingOwnerId->rptOwnerCik,
+        'relationship' => [],
+        'transactions' => [],
+        'xmlUrl' => $xmlUrl,
+        'secUrl' => $secFilingUrl
+    ];
+    
+    $rel = $xml->reportingOwner->reportingOwnerRelationship;
+    if ((string)$rel->isDirector == '1') $data['relationship'][] = 'Director';
+    if ((string)$rel->isOfficer == '1') $data['relationship'][] = 'Officer';
+    if ((string)$rel->isTenPercentOwner == '1') $data['relationship'][] = '10% Owner';
+    if ((string)$rel->isOther == '1') $data['relationship'][] = 'Other';
+    if (!empty((string)$rel->officerTitle)) $data['relationship'][] = (string)$rel->officerTitle;
+    
+    if (isset($xml->nonDerivativeTable->nonDerivativeTransaction)) {
+        foreach ($xml->nonDerivativeTable->nonDerivativeTransaction as $trans) {
+            $transactionCode = (string)$trans->transactionCoding->transactionCode;
+            $transactionType = match($transactionCode) {
+                'P' => 'Purchase',
+                'S' => 'Sale',
+                'A' => 'Award/Grant',
+                'M' => 'Exercise',
+                'G' => 'Gift',
+                'D' => 'Disposition',
+                'F' => 'Tax Withholding',
+                default => $transactionCode
+            };
+            
+            $acquiredDisposed = (string)$trans->transactionAmounts->transactionAcquiredDisposedCode->value;
+            
+            $data['transactions'][] = [
+                'securityTitle' => (string)$trans->securityTitle->value,
+                'transactionDate' => (string)$trans->transactionDate->value,
+                'transactionType' => $transactionType,
+                'transactionCode' => $transactionCode,
+                'shares' => (string)$trans->transactionAmounts->transactionShares->value,
+                'pricePerShare' => (string)$trans->transactionAmounts->transactionPricePerShare->value,
+                'acquiredDisposed' => $acquiredDisposed,
+                'acquiredDisposedText' => $acquiredDisposed == 'A' ? 'Acquired' : 'Disposed',
+                'sharesOwned' => (string)$trans->postTransactionAmounts->sharesOwnedFollowingTransaction->value,
+                'ownership' => (string)$trans->ownershipNature->directOrIndirectOwnership->value == 'D' ? 'Direct' : 'Indirect'
+            ];
+        }
+    }
+    
+    return $data;
+}
+
+// Fetch insider trading data
+$insiderData = [];
+$companyInfo = getCIKFromTicker($symbol);
+if (!isset($companyInfo['error'])) {
+    $submissions = getSubmissions($companyInfo['cik_str']);
+    if (!isset($submissions['error'])) {
+        $filings = $submissions['filings']['recent'];
+        $form4Count = 0;
+        for ($i = 0; $i < count($filings['filingDate']); $i++) {
+            if ($filings['form'][$i] == '4' && $form4Count < 10) {
+                $form4Data = parseForm4XML($submissions['cik'], $filings['accessionNumber'][$i], $filings['primaryDocument'][$i]);
+                if ($form4Data) {
+                    $form4Data['filingDate'] = $filings['filingDate'][$i];
+                    $form4Data['accessionNumber'] = $filings['accessionNumber'][$i];
+                    $insiderData[] = $form4Data;
+                    $form4Count++;
+                }
+            }
+        }
+    }
+}
+
+// ...existing code...
