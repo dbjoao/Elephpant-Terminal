@@ -1,5 +1,6 @@
 # Configuration files with API keys
 config.php
+.vscode/sftp.json
 
 # Vendor directory
 vendor/

@@ -7,6 +7,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Index Performance</title>
+  <link rel="icon" type="image/png" href="./logo.png" />
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -145,6 +146,8 @@
     crossorigin=""
   ></script>
   <script>
+  const cartoApiKey = 'cb1_3vdi_1_4de2fb71ae7fa55d20d83e1e';
+
   const worldBounds = L.latLngBounds(
     L.latLng(-85, -180),
     L.latLng(85, 180)
@@ -156,11 +159,9 @@
     worldCopyJump: false
   }).setView([20, 0], 2);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    subdomains: 'abcd',
-    maxZoom: 20,
-    noWrap: true
-  }).addTo(map);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=' + cartoApiKey, {
+  maxZoom: 8,
+}).addTo(map);
 
   function lockMinZoomToBounds() {
     const min = map.getBoundsZoom(worldBounds, true);
